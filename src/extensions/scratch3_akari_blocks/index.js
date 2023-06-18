@@ -82,7 +82,6 @@ const Douts = {
     DOUT1: 'dout1'
 };
 
-
 /**
  * Enum for pin value.
  * @readonly
@@ -123,19 +122,19 @@ const sendAbsolutePosition = async () => {
 
 const sendVel = async () => {
     await axios.post(`${motorClient}/velocity`, null, {
-        params: {vel: motorVel * DEG2RAD}
+        params: { vel: motorVel * DEG2RAD }
     });
 };
 
 const sendAcc = async () => {
     await axios.post(`${motorClient}/acceleration`, null, {
-        params: {acc: motorAcc * DEG2RAD}
+        params: { acc: motorAcc * DEG2RAD }
     });
 };
 
 const setServoStatus = async function (status) {
     await axios.post(`${motorClient}/servo`, null, {
-        params: {enabled: status}
+        params: { enabled: status }
     });
 };
 
@@ -154,6 +153,7 @@ const getServoPosition = async () => {
     panTarget = parseFloat(res.data.pan) * RAD2DEG;
     tiltTarget = parseFloat(res.data.tilt) * RAD2DEG;
 };
+
 const getSensorData = async () => {
     const res = await axios.get(`${sensorClient}/values`);
     buttonA = res.data.button_a;
@@ -186,12 +186,11 @@ const setDisplayText = async function (text) {
 
 const setDisplayImage = async function (path) {
     await axios.post(`${displayClient}/image`, null, {
-        params: {path: path}
+        params: { path: path }
     });
 };
 class Scratch3AkariBlocks {
-
-    constructor (runtime) {
+    constructor(runtime) {
         this.runtime = runtime;
         axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
         getServoStatus();
@@ -201,7 +200,7 @@ class Scratch3AkariBlocks {
         }, 100);
     }
 
-    get JOINTS_MENU () {
+    get JOINTS_MENU() {
         return [
             {
                 text: 'pan',
@@ -213,7 +212,7 @@ class Scratch3AkariBlocks {
             }
         ];
     }
-    get BUTTONS_MENU () {
+    get BUTTONS_MENU() {
         return [
             {
                 text: 'A',
@@ -234,7 +233,7 @@ class Scratch3AkariBlocks {
         ];
     }
 
-    get DINS_MENU () {
+    get DINS_MENU() {
         return [
             {
                 text: '0',
@@ -251,7 +250,7 @@ class Scratch3AkariBlocks {
         ];
     }
 
-    get DOUTS_MENU () {
+    get DOUTS_MENU() {
         return [
             {
                 text: '0',
@@ -263,7 +262,7 @@ class Scratch3AkariBlocks {
             }
         ];
     }
-    get PINVAL_MENU () {
+    get PINVAL_MENU() {
         return [
             {
                 text: 'Hi',
@@ -275,7 +274,7 @@ class Scratch3AkariBlocks {
             }
         ];
     }
-    get SENSORS_MENU () {
+    get SENSORS_MENU() {
         return [
             {
                 text: '温度',
@@ -291,7 +290,7 @@ class Scratch3AkariBlocks {
             }
         ];
     }
-    get COLOR_MENU () {
+    get COLOR_MENU() {
         return [
             {
                 text: 'しろ',
@@ -335,7 +334,7 @@ class Scratch3AkariBlocks {
             }
         ];
     }
-    getInfo () {
+    getInfo() {
         return {
             id: 'akariblocks',
             name: 'Akari Blocks',
@@ -625,15 +624,15 @@ class Scratch3AkariBlocks {
         };
     }
 
-    async servoOn () {
+    async servoOn() {
         await (setServoStatus(true));
     }
 
-    async servoOff () {
+    async servoOff() {
         await (setServoStatus(false));
     }
 
-    async getMotorPos (args) {
+    async getMotorPos(args) {
         await (getServoPosition());
         if (args.JOINT === Joints.PAN) {
             return panTarget;
@@ -643,7 +642,7 @@ class Scratch3AkariBlocks {
         return 0;
     }
 
-    async setMotorPos (args) {
+    async setMotorPos(args) {
         if (args.JOINT === Joints.PAN) {
             panTarget = setLimit(parseFloat(args.ANGLE), panMin, panMax);
         } else if (args.JOINT === Joints.TILT) {
@@ -652,7 +651,7 @@ class Scratch3AkariBlocks {
         await (sendAbsolutePosition());
     }
 
-    async setMotorRelativePos (args) {
+    async setMotorRelativePos(args) {
         if (args.JOINT === Joints.PAN) {
             panTarget = setLimit(panTarget + parseFloat(args.ANGLE), panMin, panMax);
         } else if (args.JOINT === Joints.TILT) {
@@ -661,29 +660,29 @@ class Scratch3AkariBlocks {
         await (sendAbsolutePosition());
     }
 
-    async setAllMotorPos (args) {
+    async setAllMotorPos(args) {
         panTarget = setLimit(parseFloat(args.PAN), panMin, panMax);
         tiltTarget = setLimit(parseFloat(args.TILT, tiltMin, tiltMax));
         await (sendAbsolutePosition());
     }
 
-    async setAllMotorRelativePos (args) {
+    async setAllMotorRelativePos(args) {
         panTarget = setLimit(panTarget + parseFloat(args.PAN), panMin, panMax);
         tiltTarget = setLimit(tiltTarget + parseFloat(args.TILT), tiltMin, tiltMax);
         await (sendAbsolutePosition());
     }
 
-    async setVel (args) {
+    async setVel(args) {
         motorVel = args.VEL;
         await (sendVel());
     }
 
-    async setAcc (args) {
+    async setAcc(args) {
         motorAcc = args.ACC;
         await (sendAcc());
     }
 
-    whenButtonPressed (args) {
+    whenButtonPressed(args) {
         // getSensorData();
         if (args.BTN === Buttons.ANY) {
             return buttonA | buttonB | buttonC;
@@ -696,8 +695,8 @@ class Scratch3AkariBlocks {
         }
         return false;
     }
-    async isButtonPressed (args) {
-        // await (getSensorData());
+    async isButtonPressed(args) {
+        await (getSensorData());
         if (args.BTN === Buttons.ANY) {
             return buttonA | buttonB | buttonC;
         } else if (args.BTN === Buttons.A) {
@@ -710,8 +709,7 @@ class Scratch3AkariBlocks {
         return false;
     }
 
-    whenDin (args) {
-        // getSensorData();
+    whenDin(args) {
         if (args.PIN === Dins.ANY) {
             return !(din0 && din1);
         } else if (args.PIN === Dins.DIN0) {
@@ -721,8 +719,7 @@ class Scratch3AkariBlocks {
         }
         return false;
     }
-    async isDin (args) {
-        // await (getSensorData());
+    async isDin(args) {
         if (args.PIN === Dins.ANY) {
             return !(din0 && din1);
         } else if (args.PIN === Dins.DIN0) {
@@ -733,13 +730,11 @@ class Scratch3AkariBlocks {
         return false;
     }
 
-    async getAin () {
-        // await (getSensorData());
+    async getAin() {
         return ain0;
     }
 
-    async getSensor (args) {
-        // await (getSensorData());
+    async getSensor(args) {
         if (args.SENSOR === Sensors.TEMPERATURE) {
             return temperature;
         } else if (args.SENSOR === Sensors.PRESSURE) {
@@ -750,7 +745,7 @@ class Scratch3AkariBlocks {
         return 0;
     }
 
-    async setDOut (args) {
+    async setDOut(args) {
         if (args.PIN === Douts.DOUT0) {
             if (args.VALUE === Pinvals.HIGH) {
                 dout0Target = true;
@@ -767,24 +762,24 @@ class Scratch3AkariBlocks {
         await (setPinout());
     }
 
-    async setPwmOut (args) {
+    async setPwmOut(args) {
         pwmout0Target = parseInt(args.VALUE, 10);
         await (setPinout());
     }
 
-    setDisplayColor (args) {
+    setDisplayColor(args) {
         displayColor = Color.rgbFromStr(args.COLOR);
     }
-    setForegroundColor (args) {
+    setForegroundColor(args) {
         foregroundColor = Color.rgbFromStr(args.COLOR);
     }
 
-    async setDisplayText (args) {
+    async setDisplayText(args) {
         const text = Cast.toString(args.TEXT);
         await (setDisplayText(text));
     }
 
-    async setDisplayImage (args) {
+    async setDisplayImage(args) {
         const path = Cast.toString(args.PATH);
         await (setDisplayImage(path));
     }

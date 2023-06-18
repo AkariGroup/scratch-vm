@@ -8,9 +8,6 @@ const hostname = location.hostname;
 log.log(`host: ${hostname}`);
 const client = `http://${hostname}:52002`;
 const cameraClient = `${client}/camera`;
-let cameraWindow;
-let isCameraWindowOpen = false;
-
 const cameraMode = {
     NONE: 'None',
     RGB: 'RGB',
@@ -26,37 +23,51 @@ const objects = {
     PERSON: 'person',
     PHONE: 'cell phone',
     BOOK: 'book',
+    MOUSE: 'mouse',
     SCISSORS: 'scissors',
+    BOTTLE: 'scissors',
+    CUP: 'cup',
+    FORK: 'fork',
+    KNIFE: 'knife',
+    SPOON: 'spoon',
+    CHAIR: 'chair',
+    TOOTHBRUSH: 'toothbrush',
     BIRD: 'bird',
     CAT: 'cat',
     DOG: 'dog',
-    MOUSE: 'mouse'
+    HORSE: 'horse',
+    SHEEP: 'sheep',
+    COW: 'cow',
+    CAR: 'car',
+    BUS: 'bus',
+    TRAIN: 'train'
 };
-const FACE_DETECTION_IMAGE_SIZE = [640, 480];
+
+const DETECTION_IMAGE_SIZE = [640, 480];
 
 
 // eslint-disable-next-line func-style, require-jsdoc
-function convertPos (pos, imageSize) {
+function convertPos(pos, imageSize) {
     return ((pos / (imageSize / 2)) - 1);
 }
 
 // eslint-disable-next-line func-style, require-jsdoc
-function convertSize (size, imageSize) {
+function convertSize(size, imageSize) {
     return (size / (imageSize));
 }
 
 // eslint-disable-next-line func-style, require-jsdoc
-function getCenter (pos, size) {
+function getCenter(pos, size) {
     return (pos + (size / 2));
 }
 
-class detectionResult{
-    constructor (data) {
+class detectionResult {
+    constructor(data) {
         this.name = data.name;
-        this.x = convertPos(parseInt(data.x, 10), FACE_DETECTION_IMAGE_SIZE[0]);
-        this.y = convertPos(parseInt(data.y, 10), FACE_DETECTION_IMAGE_SIZE[1]);
-        this.width = convertSize(parseInt(data.width, 10), FACE_DETECTION_IMAGE_SIZE[0]);
-        this.height = convertSize(parseInt(data.height, 10), FACE_DETECTION_IMAGE_SIZE[1]);
+        this.x = convertPos(parseInt(data.x, 10), DETECTION_IMAGE_SIZE[0]);
+        this.y = convertPos(parseInt(data.y, 10), DETECTION_IMAGE_SIZE[1]);
+        this.width = convertSize(parseInt(data.width, 10), DETECTION_IMAGE_SIZE[0]);
+        this.height = convertSize(parseInt(data.height, 10), DETECTION_IMAGE_SIZE[1]);
     }
 }
 
@@ -65,14 +76,14 @@ let faceResult = [];
 let objectResult = [];
 
 // eslint-disable-next-line func-style, require-jsdoc
-function toBoolean (str){
-    if (typeof str !== 'string'){
+function toBoolean(str) {
+    if (typeof str !== 'string') {
         return Boolean(str);
     }
     try {
         const obj = JSON.parse(str.toLowerCase());
         return obj === true;
-    } catch (e){
+    } catch (e) {
         return str !== '';
     }
 }
@@ -98,11 +109,12 @@ const getObjectResult = async () => {
 
 class Scratch3AkariCamera {
 
-    constructor (runtime) {
+    constructor(runtime) {
         this.runtime = runtime;
         axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+        cameraModeChange(cameraMode.NONE);
     }
-    get CAMERA_MENU () {
+    get CAMERA_MENU() {
         return [
             {
                 text: 'RGB',
@@ -122,7 +134,7 @@ class Scratch3AkariCamera {
             }
         ];
     }
-    get AXIS_MENU () {
+    get AXIS_MENU() {
         return [
             {
                 text: 'x',
@@ -134,7 +146,7 @@ class Scratch3AkariCamera {
             }
         ];
     }
-    get OBJECTS_MENU () {
+    get OBJECTS_MENU() {
         return [
             {
                 text: '人',
@@ -149,8 +161,40 @@ class Scratch3AkariCamera {
                 value: objects.BOOK
             },
             {
+                text: 'マウス',
+                value: objects.MOUSE
+            },
+            {
                 text: 'はさみ',
                 value: objects.SCISSORS
+            },
+            {
+                text: 'ペットボトル',
+                value: objects.BOTTLE
+            },
+            {
+                text: 'コップ',
+                value: objects.CUP
+            },
+            {
+                text: 'フォーク',
+                value: objects.FORK
+            },
+            {
+                text: 'スプーン',
+                value: objects.KNIFE
+            },
+            {
+                text: 'ナイフ',
+                value: objects.SPOON
+            },
+            {
+                text: 'いす',
+                value: objects.CHAIR
+            },
+            {
+                text: '歯ブラシ',
+                value: objects.TOOTHBRUSH
             },
             {
                 text: 'とり',
@@ -165,12 +209,36 @@ class Scratch3AkariCamera {
                 value: objects.DOG
             },
             {
-                text: 'マウス',
-                value: objects.MOUSE
+                text: 'うま',
+                value: objects.HORSE
+            },
+            {
+                text: 'ひつじ',
+                value: objects.SHEEP
+            },
+            {
+                text: 'ぞう',
+                value: objects.ELEPHANT
+            },
+            {
+                text: 'うし',
+                value: objects.COW
+            },
+            {
+                text: 'くるま',
+                value: objects.CAR
+            },
+            {
+                text: 'バス',
+                value: objects.BUS
+            },
+            {
+                text: 'でんしゃ',
+                value: objects.TRAIN
             }
         ];
     }
-    getInfo () {
+    getInfo() {
         return {
             id: 'akaricamera',
             name: 'Akari Camera',
@@ -328,15 +396,15 @@ class Scratch3AkariCamera {
         };
     }
 
-    async cameraOn (args) {
+    async cameraOn(args) {
         await (cameraModeChange(args.MODE));
     }
 
-    async cameraOff () {
+    async cameraOff() {
         await (cameraModeChange(cameraMode.NONE));
     }
 
-    async getFaceDetection () {
+    async getFaceDetection() {
         const res = await getFaceResult();
         if (toBoolean(res.result) === true) {
             faceResult = [];
@@ -347,13 +415,13 @@ class Scratch3AkariCamera {
         }
         return false;
     }
-    isFace () {
+    isFace() {
         if (faceResult.length > 0) {
             return true;
         }
         return false;
     }
-    getFaceCenter (args) {
+    getFaceCenter(args) {
         if (faceResult.length > 0) {
             if (args.AXIS === axis.X) {
                 return getCenter(faceResult[0].x, faceResult[0].width);
@@ -363,7 +431,7 @@ class Scratch3AkariCamera {
         }
         return 0;
     }
-    getFaceSize (args) {
+    getFaceSize(args) {
         if (faceResult.length > 0) {
             if (args.AXIS === axis.X) {
                 return faceResult[0].width;
@@ -373,7 +441,7 @@ class Scratch3AkariCamera {
         }
         return 0;
     }
-    async getObjectDetection () {
+    async getObjectDetection() {
         const res = await getObjectResult();
         if (toBoolean(res.result) === true) {
             objectResult = [];
@@ -384,7 +452,7 @@ class Scratch3AkariCamera {
         }
         return false;
     }
-    isObject (args) {
+    isObject(args) {
         for (let i = 0; i < objectResult.length; i++) {
             if (objectResult[i].name === args.NAME) {
                 return true;
@@ -392,7 +460,7 @@ class Scratch3AkariCamera {
         }
         return false;
     }
-    getObjectNum (args) {
+    getObjectNum(args) {
         let num = 0;
         for (let i = 0; i < objectResult.length; i++) {
             if (objectResult[i].name === args.NAME) {
@@ -401,17 +469,17 @@ class Scratch3AkariCamera {
         }
         return num;
     }
-    getTotalObjectNum () {
+    getTotalObjectNum() {
         return objectResult.length;
     }
-    getObjectNameFromId (args) {
-        if (args.ID > objectResult.length){
+    getObjectNameFromId(args) {
+        if (args.ID >= objectResult.length) {
             return 'NONE';
         }
         return objectResult[args.ID].name;
     }
-    getObjectCenter (args) {
-        if (args.ID <= objectResult.length){
+    getObjectCenter(args) {
+        if (args.ID < objectResult.length) {
             if (args.AXIS === axis.X) {
                 return getCenter(objectResult[args.ID].x, objectResult[args.ID].width);
             } else if (args.AXIS === axis.Y) {
@@ -420,8 +488,8 @@ class Scratch3AkariCamera {
         }
         return 0;
     }
-    getObjectSize (args) {
-        if (objectResult.length > 0) {
+    getObjectSize(args) {
+        if (args.ID < objectResult.length) {
             if (args.AXIS === axis.X) {
                 return objectResult[args.ID].width;
             } else if (args.AXIS === axis.Y) {
