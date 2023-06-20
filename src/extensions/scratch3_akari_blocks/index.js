@@ -442,7 +442,7 @@ class Scratch3AkariBlocks {
                 {
                     opcode: 'setAcc',
                     blockType: BlockType.COMMAND,
-                    text: 'モータ角加速度を[ACC]°/sにする',
+                    text: 'モータ角加速度を[ACC]°/s^2にする',
                     arguments: {
                         ACC: {
                             type: ArgumentType.NUMBER,
