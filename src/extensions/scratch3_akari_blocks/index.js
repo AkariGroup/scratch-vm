@@ -36,6 +36,7 @@ let pressure = 0;
 let brightness = 0;
 let displayColor = Color.RgbColors.WHITE;
 let foregroundColor = Color.RgbColors.BLACK;
+let fontSize = 5;
 const RAD2DEG = 180 / Math.PI;
 const DEG2RAD = Math.PI / 180;
 
@@ -180,7 +181,7 @@ const setDisplayText = async function (text) {
         text: text,
         display_color: displayColor,
         foreground_color: foregroundColor,
-        font_size: 5
+        font_size: fontSize
     });
 };
 
@@ -569,6 +570,17 @@ class Scratch3AkariBlocks {
                     }
                 },
                 {
+                    opcode: 'setDisplayFontSize',
+                    blockType: BlockType.COMMAND,
+                    text: '画面表示の文字サイズを[SIZE]にする',
+                    arguments: {
+                        SIZE: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 5
+                        }
+                    }
+                },
+                {
                     opcode: 'setDisplayText',
                     blockType: BlockType.COMMAND,
                     text: '画面に[TEXT]を表示する',
@@ -683,7 +695,6 @@ class Scratch3AkariBlocks {
     }
 
     whenButtonPressed(args) {
-        // getSensorData();
         if (args.BTN === Buttons.ANY) {
             return buttonA | buttonB | buttonC;
         } else if (args.BTN === Buttons.A) {
@@ -696,7 +707,6 @@ class Scratch3AkariBlocks {
         return false;
     }
     async isButtonPressed(args) {
-        await (getSensorData());
         if (args.BTN === Buttons.ANY) {
             return buttonA | buttonB | buttonC;
         } else if (args.BTN === Buttons.A) {
@@ -719,6 +729,7 @@ class Scratch3AkariBlocks {
         }
         return false;
     }
+
     async isDin(args) {
         if (args.PIN === Dins.ANY) {
             return !(din0 && din1);
@@ -770,8 +781,19 @@ class Scratch3AkariBlocks {
     setDisplayColor(args) {
         displayColor = Color.rgbFromStr(args.COLOR);
     }
+
     setForegroundColor(args) {
         foregroundColor = Color.rgbFromStr(args.COLOR);
+    }
+
+    setDisplayFontSize(args) {
+        let num = args.SIZE;
+        if (num > 11) {
+            num = 11;
+        } else if (num < 1) {
+            num = 1;
+        }
+        fontSize = num;
     }
 
     async setDisplayText(args) {
