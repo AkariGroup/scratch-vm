@@ -111,7 +111,7 @@ const setLimit = function (val, min, max) {
     } else if (out < min) {
         out = min;
     }
-    return val;
+    return out;
 };
 
 const sendAbsolutePosition = async () => {
@@ -141,10 +141,10 @@ const setServoStatus = async function (status) {
 
 const getServoStatus = async () => {
     const res = await axios.get(`${motorClient}/servo`);
-    panMin = parseFloat(res.pan_min) * RAD2DEG;
-    panMax = parseFloat(res.pan_max) * RAD2DEG;
-    tiltMin = parseFloat(res.tilt_min) * RAD2DEG;
-    tiltMax = parseFloat(res.tilt_max) * RAD2DEG;
+    panMin = parseFloat(res.data.pan_min) * RAD2DEG;
+    panMax = parseFloat(res.data.pan_max) * RAD2DEG;
+    tiltMin = parseFloat(res.data.tilt_min) * RAD2DEG;
+    tiltMax = parseFloat(res.data.tilt_max) * RAD2DEG;
     motorVel = parseFloat(res.data.vel) * RAD2DEG;
     motorAcc = parseFloat(res.data.acc) * RAD2DEG;
 };
