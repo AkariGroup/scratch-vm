@@ -364,6 +364,161 @@ class Scratch3AkariNewBlocks {
         ];
     }
 
+    get LETTER_SIZE_MENU() {
+        return [
+            {
+                text: '1',
+                value: 1
+            },
+            {
+                text: '2',
+                value: 2
+            },
+            {
+                text: '3',
+                value: 3
+            },
+            {
+                text: '4',
+                value: 4
+            },
+            {
+                text: '5',
+                value: 5
+            },
+            {
+                text: '6',
+                value: 6
+            },
+            {
+                text: '7',
+                value: 7
+            },
+            {
+                text: '8',
+                value: 8
+            },
+            {
+                text: '9',
+                value: 9
+            },
+            {
+                text: '10',
+                value: 10
+            },
+            {
+                text: '11',
+                value: 11
+            }
+        ];
+    }
+
+    get ANGLE_MENU() {
+        return [
+            {
+                text: '-60',
+                value: -60
+            },
+            {
+                text: '-50',
+                value: -50
+            },
+            {
+                text: '-40',
+                value: -40
+            },
+            {
+                text: '-30',
+                value: -30
+            },
+            {
+                text: '-20',
+                value: -20
+            },
+            {
+                text: '-10',
+                value: -10
+            },
+            {
+                text: '0',
+                value: 0
+            },
+            {
+                text: '10',
+                value: 10
+            },
+            {
+                text: '20',
+                value: 20
+            },
+            {
+                text: '30',
+                value: 30
+            },
+            {
+                text: '40',
+                value: 40
+            },
+            {
+                text: '50',
+                value: 50
+            },
+            {
+                text: '60',
+                value: 60
+            }
+        ];
+    }
+
+    get PWM_MENU() {
+        return [
+            {
+                text: '0',
+                value: 0
+            },
+            {
+                text: '25',
+                value: 25
+            },
+            {
+                text: '50',
+                value: 50
+            },
+            {
+                text: '75',
+                value: 75
+            },
+            {
+                text: '100',
+                value: 100
+            },
+            {
+                text: '125',
+                value: 125
+            },
+            {
+                text: '150',
+                value: 150
+            },
+            {
+                text: '175',
+                value: 175
+            },
+            {
+                text: '200',
+                value: 200
+            },
+            {
+                text: '225',
+                value: 225
+            },
+            {
+                text: '255',
+                value: 255
+            },
+        ];
+    }
+
     getInfo() {
         return {
             id: 'akarinewblocks',
@@ -407,6 +562,7 @@ class Scratch3AkariNewBlocks {
                         },
                         ANGLE: {
                             type: ArgumentType.NUMBER,
+                            menu: 'angle',
                             defaultValue: 0
                         }
                     }
@@ -418,10 +574,12 @@ class Scratch3AkariNewBlocks {
                     arguments: {
                         PAN: {
                             type: ArgumentType.NUMBER,
+                            menu: 'angle',
                             defaultValue: 0
                         },
                         TILT: {
                             type: ArgumentType.NUMBER,
+                            menu: 'angle',
                             defaultValue: 0
                         }
                     }
@@ -438,6 +596,7 @@ class Scratch3AkariNewBlocks {
                         },
                         ANGLE: {
                             type: ArgumentType.NUMBER,
+                            menu: 'angle',
                             defaultValue: 0
                         }
                     }
@@ -449,10 +608,12 @@ class Scratch3AkariNewBlocks {
                     arguments: {
                         PAN: {
                             type: ArgumentType.NUMBER,
+                            menu: 'angle',
                             defaultValue: 0
                         },
                         TILT: {
                             type: ArgumentType.NUMBER,
+                            menu: 'angle',
                             defaultValue: 0
                         }
                     }
@@ -571,6 +732,7 @@ class Scratch3AkariNewBlocks {
                     arguments: {
                         VALUE: {
                             type: ArgumentType.NUMBER,
+                            menu: 'pwm',
                             defaultValue: 0
                         }
                     }
@@ -606,6 +768,7 @@ class Scratch3AkariNewBlocks {
                     arguments: {
                         SIZE: {
                             type: ArgumentType.NUMBER,
+                            menu: 'letter_size',
                             defaultValue: 5
                         }
                     }
@@ -665,6 +828,18 @@ class Scratch3AkariNewBlocks {
                 velocitys: {
                     acceptReporters: true,
                     items: this.VELOCITY_MENU
+                },
+                letter_size: {
+                    acceptReporters: true,
+                    items: this.LETTER_SIZE_MENU
+                },
+                angle: {
+                    acceptReporters: true,
+                    items: this.ANGLE_MENU
+                },
+                pwm: {
+                    acceptReporters: true,
+                    items: this.PWM_MENU
                 }
             }
         };
