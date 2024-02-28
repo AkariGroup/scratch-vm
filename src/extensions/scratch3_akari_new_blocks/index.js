@@ -256,7 +256,7 @@ class Scratch3AkariNewBlocks {
                 value: Dins.DIN1
             },
             {
-                text: 'どれか',
+                text: 'どちらか',
                 value: Dins.ANY
             }
         ];
@@ -277,11 +277,11 @@ class Scratch3AkariNewBlocks {
     get PINVAL_MENU() {
         return [
             {
-                text: 'Hi',
+                text: 'ハイ',
                 value: Pinvals.HIGH
             },
             {
-                text: 'Lo',
+                text: 'ロー',
                 value: Pinvals.LOW
             }
         ];
@@ -540,7 +540,7 @@ class Scratch3AkariNewBlocks {
                 },
                 {
                     opcode: 'getMotorPos',
-                    text: '[JOINT]の位置',
+                    text: '[JOINT]のばしょ',
                     blockType: BlockType.REPORTER,
                     arguments: {
                         JOINT: {
@@ -630,21 +630,21 @@ class Scratch3AkariNewBlocks {
                         }
                     }
                 },
-                {
-                    opcode: 'setAcc',
-                    blockType: BlockType.COMMAND,
-                    text: 'モータ角加速度を[ACC]°/s^2にする',
-                    arguments: {
-                        ACC: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 0
-                        }
-                    }
-                },
+                // {
+                //     opcode: 'setAcc',
+                //     blockType: BlockType.COMMAND,
+                //     text: 'モータ角加速度を[ACC]°/s^2にする',
+                //     arguments: {
+                //         ACC: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 0
+                //         }
+                //     }
+                // },
                 {
                     opcode: 'whenButtonPressed',
                     blockType: BlockType.HAT,
-                    text: 'ボタン[BTN]がおされたとき',
+                    text: 'ボタンの[BTN]がおされたとき',
                     arguments: {
                         BTN: {
                             type: ArgumentType.STRING,
@@ -655,7 +655,7 @@ class Scratch3AkariNewBlocks {
                 },
                 {
                     opcode: 'isButtonPressed',
-                    text: 'ボタン[BTN]がおされた',
+                    text: 'ボタンの[BTN]がおされた',
                     blockType: BlockType.BOOLEAN,
                     arguments: {
                         BTN: {
@@ -668,7 +668,7 @@ class Scratch3AkariNewBlocks {
                 {
                     opcode: 'whenDin',
                     blockType: BlockType.HAT,
-                    text: 'din[PIN]がLowになったとき',
+                    text: 'デジタルにゅうりょくの[PIN]がローになったとき',
                     arguments: {
                         PIN: {
                             type: ArgumentType.STRING,
@@ -679,7 +679,7 @@ class Scratch3AkariNewBlocks {
                 },
                 {
                     opcode: 'isDin',
-                    text: 'din[PIN]がLow',
+                    text: 'デジタルにゅうりょくの[PIN]がロー',
                     blockType: BlockType.BOOLEAN,
                     arguments: {
                         PIN: {
@@ -691,14 +691,14 @@ class Scratch3AkariNewBlocks {
                 },
                 {
                     opcode: 'getAin',
-                    text: 'ain0の値',
+                    text: 'アナログにゅうりょく',
                     blockType: BlockType.REPORTER,
                     arguments: {
                     }
                 },
                 {
                     opcode: 'getSensor',
-                    text: '[SENSOR]の値',
+                    text: '[SENSOR]',
                     blockType: BlockType.REPORTER,
                     arguments: {
                         SENSOR: {
@@ -711,7 +711,7 @@ class Scratch3AkariNewBlocks {
                 {
                     opcode: 'setDOut',
                     blockType: BlockType.COMMAND,
-                    text: 'dout[PIN]を[VALUE]にする',
+                    text: 'デジタルしゅつりょく[PIN]を[VALUE]にする',
                     arguments: {
                         PIN: {
                             type: ArgumentType.STRING,
@@ -728,7 +728,7 @@ class Scratch3AkariNewBlocks {
                 {
                     opcode: 'setPwmOut',
                     blockType: BlockType.COMMAND,
-                    text: 'pwmout0を[VALUE]にする',
+                    text: 'ＰＷＭしゅつりょくを[VALUE]にする',
                     arguments: {
                         VALUE: {
                             type: ArgumentType.NUMBER,
