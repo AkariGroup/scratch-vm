@@ -248,11 +248,11 @@ class Scratch3AkariNewBlocks {
     get DINS_MENU() {
         return [
             {
-                text: '0',
+                text: '0ばん',
                 value: Dins.DIN0
             },
             {
-                text: '1',
+                text: '1ばん',
                 value: Dins.DIN1
             },
             {
@@ -289,7 +289,7 @@ class Scratch3AkariNewBlocks {
     get SENSORS_MENU() {
         return [
             {
-                text: 'しつど',
+                text: 'おんど',
                 value: Sensors.TEMPERATURE
             },
             {
@@ -354,7 +354,7 @@ class Scratch3AkariNewBlocks {
                 value: Velocity.FAST
             },
             {
-                text: 'ふつう',
+                text: 'ゆっくり',
                 value: Velocity.NORMAL
             },
             {
@@ -416,56 +416,56 @@ class Scratch3AkariNewBlocks {
     get ANGLE_MENU() {
         return [
             {
-                text: '-60',
-                value: -60
-            },
-            {
-                text: '-50',
-                value: -50
-            },
-            {
-                text: '-40',
-                value: -40
-            },
-            {
-                text: '-30',
-                value: -30
-            },
-            {
-                text: '-20',
-                value: -20
-            },
-            {
-                text: '-10',
-                value: -10
-            },
-            {
-                text: '0',
-                value: 0
-            },
-            {
-                text: '10',
-                value: 10
-            },
-            {
-                text: '20',
-                value: 20
-            },
-            {
-                text: '30',
-                value: 30
-            },
-            {
-                text: '40',
-                value: 40
+                text: '60',
+                value: 60
             },
             {
                 text: '50',
                 value: 50
             },
             {
-                text: '60',
-                value: 60
+                text: '40',
+                value: 40
+            },
+            {
+                text: '30',
+                value: 30
+            },
+            {
+                text: '20',
+                value: 20
+            },
+            {
+                text: '10',
+                value: 10
+            },
+            {
+                text: '0',
+                value: 0
+            },
+            {
+                text: '-10',
+                value: -10
+            },
+            {
+                text: '-20',
+                value: -20
+            },
+            {
+                text: '-30',
+                value: -30
+            },
+            {
+                text: '-40',
+                value: -40
+            },
+            {
+                text: '-50',
+                value: -50
+            },
+            {
+                text: '-60',
+                value: -60
             }
         ];
     }
