@@ -46,8 +46,10 @@ const DEG2RAD = Math.PI / 180;
  * @enum {string}
  */
 const Joints = {
-    PAN: 'pan',
-    TILT: 'tilt'
+    RIHGT: 'right',
+    LEFT: 'left',
+    UP: 'up',
+    DOWN: 'down'
 };
 
 /**
@@ -215,12 +217,20 @@ class Scratch3AkariNewBlocks {
     get JOINTS_MENU() {
         return [
             {
-                text: 'パン',
-                value: Joints.PAN
+                text: 'みぎ',
+                value: Joints.RIHGT
             },
             {
-                text: 'チルト',
-                value: Joints.TILT
+                text: 'ひだり',
+                value: Joints.LEFT
+            },
+            {
+                text: 'うえ',
+                value: Joints.UP
+            },
+            {
+                text: 'した',
+                value: Joints.DOWN
             }
         ];
     }
@@ -546,7 +556,7 @@ class Scratch3AkariNewBlocks {
                         JOINT: {
                             type: ArgumentType.STRING,
                             menu: 'joints',
-                            defaultValue: Joints.PAN
+                            defaultValue: Joints.RIHGT
                         }
                     }
                 },
@@ -558,7 +568,7 @@ class Scratch3AkariNewBlocks {
                         JOINT: {
                             type: ArgumentType.STRING,
                             menu: 'joints',
-                            defaultValue: Joints.PAN
+                            defaultValue: Joints.RIHGT
                         },
                         ANGLE: {
                             type: ArgumentType.NUMBER,
@@ -570,7 +580,7 @@ class Scratch3AkariNewBlocks {
                 {
                     opcode: 'setAllMotorPos',
                     blockType: BlockType.COMMAND,
-                    text: 'パンを[PAN]°、チルトを[TILT]°にうごかす',
+                    text: 'さゆうを[PAN]°、じょうげを[TILT]°にうごかす',
                     arguments: {
                         PAN: {
                             type: ArgumentType.NUMBER,
@@ -587,12 +597,12 @@ class Scratch3AkariNewBlocks {
                 {
                     opcode: 'setMotorRelativePos',
                     blockType: BlockType.COMMAND,
-                    text: '[JOINT]をいまのばしょから[ANGLE]°うごかす',
+                    text: 'いまのばしょから[JOINT]に[ANGLE]°うごかす',
                     arguments: {
                         JOINT: {
                             type: ArgumentType.STRING,
                             menu: 'joints',
-                            defaultValue: Joints.PAN
+                            defaultValue: Joints.RIHGT
                         },
                         ANGLE: {
                             type: ArgumentType.NUMBER,
@@ -604,7 +614,7 @@ class Scratch3AkariNewBlocks {
                 {
                     opcode: 'setAllMotorRelativePos',
                     blockType: BlockType.COMMAND,
-                    text: 'パンをいまのばしょから[PAN]°、チルトをいまのばしょから[TILT]°うごかす',
+                    text: 'いまのばしょからさゆうに[PAN]°、じょうげに[TILT]°うごかす',
                     arguments: {
                         PAN: {
                             type: ArgumentType.NUMBER,
@@ -855,28 +865,40 @@ class Scratch3AkariNewBlocks {
 
     async getMotorPos(args) {
         await (getServoPosition());
-        if (args.JOINT === Joints.PAN) {
+        if (args.JOINT === Joints.RIHGT) {
+            return -panTarget;
+        } else if (args.JOINT === Joints.LEFT) {
             return panTarget;
-        } else if (args.JOINT === Joints.TILT) {
+        } else if (args.JOINT === Joints.UP) {
             return tiltTarget;
+        } else if (args.JOINT === Joints.DOWN) {
+            return -tiltTarget;
         }
         return 0;
     }
 
     async setMotorPos(args) {
-        if (args.JOINT === Joints.PAN) {
+        if (args.JOINT === Joints.RIHGT) {
+            panTarget = setLimit(parseFloat(-args.ANGLE), panMin, panMax);
+        } else if (args.JOINT === Joints.LEFT) {
             panTarget = setLimit(parseFloat(args.ANGLE), panMin, panMax);
-        } else if (args.JOINT === Joints.TILT) {
+        } else if (args.JOINT === Joints.UP) {
             tiltTarget = setLimit(parseFloat(args.ANGLE), tiltMin, tiltMax);
+        } else if (args.JOINT === Joints.DOWN) {
+            tiltTarget = setLimit(parseFloat(-args.ANGLE), tiltMin, tiltMax);
         }
         await (sendAbsolutePosition());
     }
 
     async setMotorRelativePos(args) {
-        if (args.JOINT === Joints.PAN) {
+        if (args.JOINT === Joints.RIHGT) {
+            panTarget = setLimit(panTarget + parseFloat(-args.ANGLE), panMin, panMax);
+        } else if (args.JOINT === Joints.LEFT) {
             panTarget = setLimit(panTarget + parseFloat(args.ANGLE), panMin, panMax);
-        } else if (args.JOINT === Joints.TILT) {
+        } else if (args.JOINT === Joints.UP) {
             tiltTarget = setLimit(tiltTarget + parseFloat(args.ANGLE), tiltMin, tiltMax);
+        } else if (args.JOINT === Joints.DOWN) {
+            tiltTarget = setLimit(tiltTarget + parseFloat(-args.ANGLE), tiltMin, tiltMax);
         }
         await (sendAbsolutePosition());
     }
