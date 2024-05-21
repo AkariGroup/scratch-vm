@@ -416,7 +416,7 @@ class Scratch3AkariBlocks {
                 {
                     opcode: 'setAllMotorRelativePos',
                     blockType: BlockType.COMMAND,
-                    text: 'panをを現在位置から[PAN]°、tiltをを現在位置から[TILT]°移動する',
+                    text: 'panを現在位置から[PAN]°、tiltを現在位置から[TILT]°移動する',
                     arguments: {
                         PAN: {
                             type: ArgumentType.NUMBER,
