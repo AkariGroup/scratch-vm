@@ -203,7 +203,7 @@ const setDisplayImage = async function (path) {
         params: { path: path }
     });
 };
-class Scratch3AkariNewBlocks {
+class Scratch3AkariBlocksSimple {
     constructor(runtime) {
         this.runtime = runtime;
         axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
@@ -531,8 +531,8 @@ class Scratch3AkariNewBlocks {
 
     getInfo() {
         return {
-            id: 'akarinewblocks',
-            name: 'AKARIブロック',
+            id: 'akariblockssimple',
+            name: 'AKARIブロック(簡易版)',
             menuIconURI: Icons.menuIconURI,
             blockIconURI: Icons.blockIconURI,
             blocks: [
@@ -1038,4 +1038,4 @@ class Scratch3AkariNewBlocks {
     }
 }
 
-module.exports = Scratch3AkariNewBlocks;
+module.exports = Scratch3AkariBlocksSimple;

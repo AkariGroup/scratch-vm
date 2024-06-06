@@ -26,8 +26,8 @@ const builtinExtensions = {
     gdxfor: () => require('../extensions/scratch3_gdx_for'),
     akariblocks: () => require('../extensions/scratch3_akari_blocks'),
     akaricamera: () => require('../extensions/scratch3_akari_camera'),
-    akarinewblocks: () => require('../extensions/scratch3_akari_new_blocks'),
-    akarinewcamera: () => require('../extensions/scratch3_akari_new_camera')
+    akariblockssimple: () => require('../extensions/scratch3_akari_blocks_simple'),
+    akaricamerasimple: () => require('../extensions/scratch3_akari_camera_simple')
 };
 
 /**

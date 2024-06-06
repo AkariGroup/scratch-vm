@@ -107,7 +107,7 @@ const getObjectResult = async () => {
     return items;
 };
 
-class Scratch3AkariNewCamera {
+class Scratch3AkariCameraSimple {
 
     constructor(runtime) {
         this.runtime = runtime;
@@ -240,8 +240,8 @@ class Scratch3AkariNewCamera {
     }
     getInfo() {
         return {
-            id: 'akarinewcamera',
-            name: 'AKARIカメラ',
+            id: 'akaricamerasimple',
+            name: 'AKARIカメラ(簡易版)',
             menuIconURI: Icons.menuIconURI,
             blockIconURI: Icons.blockIconURI,
             blocks: [
@@ -500,4 +500,4 @@ class Scratch3AkariNewCamera {
     }
 }
 
-module.exports = Scratch3AkariNewCamera;
+module.exports = Scratch3AkariCameraSimple;
