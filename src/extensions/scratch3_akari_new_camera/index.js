@@ -42,8 +42,20 @@ const objects = {
     BUS: 'bus',
     TRAIN: 'train'
 };
+const column = {
+    RIGHT: 'right',
+    CENTER: 'center',
+    LEFT: 'left'
+};
+const row = {
+    UPPER: 'upper',
+    CENTER: 'center',
+    LOWER: 'lower'
+};
 
-const DETECTION_IMAGE_SIZE = [640, 480];
+const DETECTION_IMAGE_SIZE = [480, 360];
+const COLUMN_SPLIT_THRESHOLD = 0.3
+const ROW_SPLIT_THRESHOLD = 0.3
 
 
 // eslint-disable-next-line func-style, require-jsdoc
@@ -238,6 +250,38 @@ class Scratch3AkariNewCamera {
             }
         ];
     }
+    get COLUMN_MENU() {
+        return [
+            {
+                text: 'みぎ',
+                value: column.RIGHT
+            },
+            {
+                text: 'まんなか',
+                value: column.CENTER
+            },
+            {
+                text: 'ひだり',
+                value: column.LEFT
+            }
+        ];
+    }
+    get ROW_MENU() {
+        return [
+            {
+                text: 'うえ',
+                value: row.UPPER
+            },
+            {
+                text: 'まんなか',
+                value: column.CENTER
+            },
+            {
+                text: 'した',
+                value: row.LOWER
+            }
+        ];
+    }
     getInfo() {
         return {
             id: 'akarinewcamera',
@@ -318,6 +362,28 @@ class Scratch3AkariNewCamera {
                     }
                 },
                 {
+                    opcode: 'isObjectVisibleArea',
+                    text: '【もの】[NAME]が[COLUMN]の[ROW]がわでにんしきされた',
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            menu: 'objects',
+                            defaultValue: objects.PERSON
+                        },
+                        COLUMN: {
+                            type: ArgumentType.STRING,
+                            menu: 'column',
+                            defaultValue: column.CENTER
+                        },
+                        ROW: {
+                            type: ArgumentType.STRING,
+                            menu: 'row',
+                            defaultValue: row.UPPER
+                        }
+                    }
+                },
+                {
                     opcode: 'getObjectNum',
                     text: '【もの】にんしきした[NAME]のかず',
                     blockType: BlockType.REPORTER,
@@ -391,6 +457,14 @@ class Scratch3AkariNewCamera {
                 objects: {
                     acceptReporters: true,
                     items: this.OBJECTS_MENU
+                },
+                column: {
+                    acceptReporters: true,
+                    items: this.COLUMN_MENU
+                },
+                row: {
+                    acceptReporters: true,
+                    items: this.ROW_MENU
                 }
             }
         };
@@ -459,6 +533,75 @@ class Scratch3AkariNewCamera {
             }
         }
         return false;
+    }
+    isObjectVisibleArea(args) {
+        for (let i = 0; i < objectResult.length; i++) {
+            if (objectResult[i].name === args.NAME) {
+                let x = getCenter(objectResult[i].x, objectResult[i].width)
+                let y = getCenter(objectResult[i].y, objectResult[i].height)
+                // 中央で検出
+                if (args.COLUMN === column.CENTER) {
+                    if (x <= COLUMN_SPLIT_THRESHOLD && x >= -COLUMN_SPLIT_THRESHOLD) {
+                        // 上側で検出
+                        if (args.ROW === row.UPPER) {
+                            if (y < -ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        // 真ん中で検出
+                        } else if (args.ROW === row.CENTER) {
+                            if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        // 下側で検出
+                        } else if (args.ROW === row.LOWER) {
+                            if (y > ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        }
+                    }
+                // 左側で検出
+                } else if (args.COLUMN === column.RIGHT) {
+                    if (x >= COLUMN_SPLIT_THRESHOLD) {
+                        // 上側で検出
+                        if (args.ROW === row.UPPER) {
+                            if (y < -ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        // 真ん中で検出
+                        } else if (args.ROW === row.CENTER) {
+                            if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        // 下側で検出
+                        } else if (args.ROW === row.LOWER) {
+                            if (y > ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        }
+                    }
+                // 右側で検出
+                } else if (args.COLUMN === column.LEFT) {
+                    if (x <= -COLUMN_SPLIT_THRESHOLD) {
+                        // 上側で検出
+                        if (args.ROW === row.UPPER) {
+                            if (y < -ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        // 真ん中で検出
+                        } else if (args.ROW === row.CENTER) {
+                            if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        // 下側で検出
+                        } else if (args.ROW === row.LOWER) {
+                            if (y > ROW_SPLIT_THRESHOLD) {
+                                return true
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     getObjectNum(args) {
         let num = 0;
