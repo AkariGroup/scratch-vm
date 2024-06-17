@@ -602,6 +602,7 @@ class Scratch3AkariCameraSimple {
                 }
             }
         }
+    return false
     }
     getObjectNum(args) {
         let num = 0;
