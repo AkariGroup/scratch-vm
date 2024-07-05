@@ -362,6 +362,40 @@ class Scratch3AkariCameraSimple {
                     }
                 },
                 {
+                    opcode: 'isObjectVisibleColumns',
+                    text: '【もの】[NAME]が[COLUMN]でにんしきされた',
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            menu: 'objects',
+                            defaultValue: objects.PERSON
+                        },
+                        COLUMN: {
+                            type: ArgumentType.STRING,
+                            menu: 'column',
+                            defaultValue: column.RIGHT
+                        }
+                    }
+                },
+                {
+                    opcode: 'isObjectVisibleRow',
+                    text: '【もの】[NAME]が[ROW]でにんしきされた',
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            menu: 'objects',
+                            defaultValue: objects.PERSON
+                        },
+                        ROW: {
+                            type: ArgumentType.STRING,
+                            menu: 'row',
+                            defaultValue: row.UPPER
+                        }
+                    }
+                },
+                {
                     opcode: 'isObjectVisibleArea',
                     text: '【もの】[NAME]が[COLUMN]の[ROW]がわでにんしきされた',
                     blockType: BlockType.BOOLEAN,
@@ -530,6 +564,56 @@ class Scratch3AkariCameraSimple {
         for (let i = 0; i < objectResult.length; i++) {
             if (objectResult[i].name === args.NAME) {
                 return true;
+            }
+        }
+        return false;
+    }
+    isObjectVisibleColumns(args) {
+        for (let i = 0; i < objectResult.length; i++) {
+            if (objectResult[i].name === args.NAME) {
+                let x = getCenter(objectResult[i].x, objectResult[i].width)
+                let y = getCenter(objectResult[i].y, objectResult[i].height)
+                // 中央で検出
+                if (args.COLUMN === column.CENTER) {
+                    if (x <= COLUMN_SPLIT_THRESHOLD && x >= -COLUMN_SPLIT_THRESHOLD) {
+                        return true
+                    }
+                // 左側で検出
+                } else if (args.COLUMN === column.RIGHT) {
+                    if (x > COLUMN_SPLIT_THRESHOLD) {
+                        return true
+                    }
+                // 右側で検出
+                } else if (args.COLUMN === column.LEFT) {
+                    if (x < -COLUMN_SPLIT_THRESHOLD) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    isObjectVisibleRow(args) {
+        for (let i = 0; i < objectResult.length; i++) {
+            if (objectResult[i].name === args.NAME) {
+                let x = getCenter(objectResult[i].x, objectResult[i].width)
+                let y = getCenter(objectResult[i].y, objectResult[i].height)
+                // 上側で検出
+                if (args.ROW === row.UPPER) {
+                    if (y < -ROW_SPLIT_THRESHOLD) {
+                        return true
+                    }
+                // 真ん中で検出
+                } else if (args.ROW === row.CENTER) {
+                    if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
+                        return true
+                    }
+                // 下側で検出
+                } else if (args.ROW === row.LOWER) {
+                    if (y > ROW_SPLIT_THRESHOLD) {
+                        return true
+                    }
+                }
             }
         }
         return false;
