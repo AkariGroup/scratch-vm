@@ -73,6 +73,49 @@ function getCenter(pos, size) {
     return (pos + (size / 2));
 }
 
+function recognitionColumn(recognition_column, pos, size){
+    let x = getCenter(pos, size)
+    // 中央で検出
+    if (recognition_column === column.CENTER) {
+        if (x <= COLUMN_SPLIT_THRESHOLD && x >= -COLUMN_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 左側で検出
+    } else if (recognition_column === column.RIGHT) {
+        if (x > COLUMN_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 右側で検出
+    } else if (recognition_column === column.LEFT) {
+        if (x < -COLUMN_SPLIT_THRESHOLD) {
+            return true
+        }
+    }
+    return false
+}
+
+function recognitionRow(recognition_row, pos, size){
+    let y = getCenter(pos, size)
+    // 上側で検出
+    if (recognition_row === row.UPPER) {
+        if (y < -ROW_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 真ん中で検出
+    } else if (recognition_row === row.CENTER) {
+        if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 下側で検出
+    } else if (recognition_row === row.LOWER) {
+        if (y > ROW_SPLIT_THRESHOLD) {
+            return true
+        }
+    }
+    return false
+}
+
+
 class detectionResult {
     constructor(data) {
         this.name = data.name;
@@ -362,7 +405,7 @@ class Scratch3AkariCameraSimple {
                     }
                 },
                 {
-                    opcode: 'isObjectVisibleColumns',
+                    opcode: 'isObjectVisibleColumn',
                     text: '【もの】[NAME]が[COLUMN]でにんしきされた',
                     blockType: BlockType.BOOLEAN,
                     arguments: {
@@ -568,27 +611,10 @@ class Scratch3AkariCameraSimple {
         }
         return false;
     }
-    isObjectVisibleColumns(args) {
+    isObjectVisibleColumn(args) {
         for (let i = 0; i < objectResult.length; i++) {
             if (objectResult[i].name === args.NAME) {
-                let x = getCenter(objectResult[i].x, objectResult[i].width)
-                let y = getCenter(objectResult[i].y, objectResult[i].height)
-                // 中央で検出
-                if (args.COLUMN === column.CENTER) {
-                    if (x <= COLUMN_SPLIT_THRESHOLD && x >= -COLUMN_SPLIT_THRESHOLD) {
-                        return true
-                    }
-                // 左側で検出
-                } else if (args.COLUMN === column.RIGHT) {
-                    if (x > COLUMN_SPLIT_THRESHOLD) {
-                        return true
-                    }
-                // 右側で検出
-                } else if (args.COLUMN === column.LEFT) {
-                    if (x < -COLUMN_SPLIT_THRESHOLD) {
-                        return true
-                    }
-                }
+                return recognitionColumn(args.COLUMN, objectResult[i].x, objectResult[i].width)
             }
         }
         return false;
@@ -596,24 +622,7 @@ class Scratch3AkariCameraSimple {
     isObjectVisibleRow(args) {
         for (let i = 0; i < objectResult.length; i++) {
             if (objectResult[i].name === args.NAME) {
-                let x = getCenter(objectResult[i].x, objectResult[i].width)
-                let y = getCenter(objectResult[i].y, objectResult[i].height)
-                // 上側で検出
-                if (args.ROW === row.UPPER) {
-                    if (y < -ROW_SPLIT_THRESHOLD) {
-                        return true
-                    }
-                // 真ん中で検出
-                } else if (args.ROW === row.CENTER) {
-                    if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
-                        return true
-                    }
-                // 下側で検出
-                } else if (args.ROW === row.LOWER) {
-                    if (y > ROW_SPLIT_THRESHOLD) {
-                        return true
-                    }
-                }
+                return recognitionRow(args.ROW, objectResult[i].y, objectResult[i].height)
             }
         }
         return false;
@@ -621,68 +630,8 @@ class Scratch3AkariCameraSimple {
     isObjectVisibleArea(args) {
         for (let i = 0; i < objectResult.length; i++) {
             if (objectResult[i].name === args.NAME) {
-                let x = getCenter(objectResult[i].x, objectResult[i].width)
-                let y = getCenter(objectResult[i].y, objectResult[i].height)
-                // 中央で検出
-                if (args.COLUMN === column.CENTER) {
-                    if (x <= COLUMN_SPLIT_THRESHOLD && x >= -COLUMN_SPLIT_THRESHOLD) {
-                        // 上側で検出
-                        if (args.ROW === row.UPPER) {
-                            if (y < -ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        // 真ん中で検出
-                        } else if (args.ROW === row.CENTER) {
-                            if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        // 下側で検出
-                        } else if (args.ROW === row.LOWER) {
-                            if (y > ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        }
-                    }
-                // 左側で検出
-                } else if (args.COLUMN === column.RIGHT) {
-                    if (x >= COLUMN_SPLIT_THRESHOLD) {
-                        // 上側で検出
-                        if (args.ROW === row.UPPER) {
-                            if (y < -ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        // 真ん中で検出
-                        } else if (args.ROW === row.CENTER) {
-                            if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        // 下側で検出
-                        } else if (args.ROW === row.LOWER) {
-                            if (y > ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        }
-                    }
-                // 右側で検出
-                } else if (args.COLUMN === column.LEFT) {
-                    if (x <= -COLUMN_SPLIT_THRESHOLD) {
-                        // 上側で検出
-                        if (args.ROW === row.UPPER) {
-                            if (y < -ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        // 真ん中で検出
-                        } else if (args.ROW === row.CENTER) {
-                            if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        // 下側で検出
-                        } else if (args.ROW === row.LOWER) {
-                            if (y > ROW_SPLIT_THRESHOLD) {
-                                return true
-                            }
-                        }
-                    }
+                if (recognitionColumn(args.COLUMN, objectResult[i].x, objectResult[i].width)){
+                    return recognitionRow(args.ROW, objectResult[i].y, objectResult[i].height)
                 }
             }
         }
