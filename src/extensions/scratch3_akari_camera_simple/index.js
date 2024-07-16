@@ -42,8 +42,20 @@ const objects = {
     BUS: 'bus',
     TRAIN: 'train'
 };
+const column = {
+    RIGHT: 'right',
+    CENTER: 'center',
+    LEFT: 'left'
+};
+const row = {
+    UPPER: 'upper',
+    CENTER: 'center',
+    LOWER: 'lower'
+};
 
-const DETECTION_IMAGE_SIZE = [640, 480];
+const DETECTION_IMAGE_SIZE = [480, 360];
+const COLUMN_SPLIT_THRESHOLD = 0.3
+const ROW_SPLIT_THRESHOLD = 0.3
 
 
 // eslint-disable-next-line func-style, require-jsdoc
@@ -60,6 +72,49 @@ function convertSize(size, imageSize) {
 function getCenter(pos, size) {
     return (pos + (size / 2));
 }
+
+function recognitionColumn(recognition_column, pos, size){
+    let x = getCenter(pos, size)
+    // 中央で検出
+    if (recognition_column === column.CENTER) {
+        if (x <= COLUMN_SPLIT_THRESHOLD && x >= -COLUMN_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 左側で検出
+    } else if (recognition_column === column.RIGHT) {
+        if (x > COLUMN_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 右側で検出
+    } else if (recognition_column === column.LEFT) {
+        if (x < -COLUMN_SPLIT_THRESHOLD) {
+            return true
+        }
+    }
+    return false
+}
+
+function recognitionRow(recognition_row, pos, size){
+    let y = getCenter(pos, size)
+    // 上側で検出
+    if (recognition_row === row.UPPER) {
+        if (y < -ROW_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 真ん中で検出
+    } else if (recognition_row === row.CENTER) {
+        if (y <= ROW_SPLIT_THRESHOLD && y >= -ROW_SPLIT_THRESHOLD) {
+            return true
+        }
+    // 下側で検出
+    } else if (recognition_row === row.LOWER) {
+        if (y > ROW_SPLIT_THRESHOLD) {
+            return true
+        }
+    }
+    return false
+}
+
 
 class detectionResult {
     constructor(data) {
@@ -238,6 +293,38 @@ class Scratch3AkariCameraSimple {
             }
         ];
     }
+    get COLUMN_MENU() {
+        return [
+            {
+                text: 'みぎ',
+                value: column.RIGHT
+            },
+            {
+                text: 'まんなか',
+                value: column.CENTER
+            },
+            {
+                text: 'ひだり',
+                value: column.LEFT
+            }
+        ];
+    }
+    get ROW_MENU() {
+        return [
+            {
+                text: 'うえ',
+                value: row.UPPER
+            },
+            {
+                text: 'まんなか',
+                value: column.CENTER
+            },
+            {
+                text: 'した',
+                value: row.LOWER
+            }
+        ];
+    }
     getInfo() {
         return {
             id: 'akaricamerasimple',
@@ -318,6 +405,62 @@ class Scratch3AkariCameraSimple {
                     }
                 },
                 {
+                    opcode: 'isObjectVisibleColumn',
+                    text: '【もの】[NAME]が[COLUMN]でにんしきされた',
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            menu: 'objects',
+                            defaultValue: objects.PERSON
+                        },
+                        COLUMN: {
+                            type: ArgumentType.STRING,
+                            menu: 'column',
+                            defaultValue: column.RIGHT
+                        }
+                    }
+                },
+                {
+                    opcode: 'isObjectVisibleRow',
+                    text: '【もの】[NAME]が[ROW]でにんしきされた',
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            menu: 'objects',
+                            defaultValue: objects.PERSON
+                        },
+                        ROW: {
+                            type: ArgumentType.STRING,
+                            menu: 'row',
+                            defaultValue: row.UPPER
+                        }
+                    }
+                },
+                {
+                    opcode: 'isObjectVisibleArea',
+                    text: '【もの】[NAME]が[COLUMN]の[ROW]がわでにんしきされた',
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            menu: 'objects',
+                            defaultValue: objects.PERSON
+                        },
+                        COLUMN: {
+                            type: ArgumentType.STRING,
+                            menu: 'column',
+                            defaultValue: column.CENTER
+                        },
+                        ROW: {
+                            type: ArgumentType.STRING,
+                            menu: 'row',
+                            defaultValue: row.UPPER
+                        }
+                    }
+                },
+                {
                     opcode: 'getObjectNum',
                     text: '【もの】にんしきした[NAME]のかず',
                     blockType: BlockType.REPORTER,
@@ -391,6 +534,14 @@ class Scratch3AkariCameraSimple {
                 objects: {
                     acceptReporters: true,
                     items: this.OBJECTS_MENU
+                },
+                column: {
+                    acceptReporters: true,
+                    items: this.COLUMN_MENU
+                },
+                row: {
+                    acceptReporters: true,
+                    items: this.ROW_MENU
                 }
             }
         };
@@ -459,6 +610,32 @@ class Scratch3AkariCameraSimple {
             }
         }
         return false;
+    }
+    isObjectVisibleColumn(args) {
+        for (let i = 0; i < objectResult.length; i++) {
+            if (objectResult[i].name === args.NAME) {
+                return recognitionColumn(args.COLUMN, objectResult[i].x, objectResult[i].width)
+            }
+        }
+        return false;
+    }
+    isObjectVisibleRow(args) {
+        for (let i = 0; i < objectResult.length; i++) {
+            if (objectResult[i].name === args.NAME) {
+                return recognitionRow(args.ROW, objectResult[i].y, objectResult[i].height)
+            }
+        }
+        return false;
+    }
+    isObjectVisibleArea(args) {
+        for (let i = 0; i < objectResult.length; i++) {
+            if (objectResult[i].name === args.NAME) {
+                if (recognitionColumn(args.COLUMN, objectResult[i].x, objectResult[i].width)){
+                    return recognitionRow(args.ROW, objectResult[i].y, objectResult[i].height)
+                }
+            }
+        }
+    return false
     }
     getObjectNum(args) {
         let num = 0;
